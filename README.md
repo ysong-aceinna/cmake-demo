@@ -5,11 +5,11 @@ CMake-Demo
 
 
 
-# 单个源文件 (Demo1)
-## 编写源码
+# 1. 单个源文件 (Demo1)
+## 1.1 编写源码
 我们的项目中只有一个源文件 `main.cc` ，该程序实现计算一个数的指数幂。
 
-## 编写 CMakeLists.txt
+## 1.2 编写 CMakeLists.txt
 与 `main.cc` 源文件同个目录下：
 
     # CMake 最低版本号要求
@@ -33,12 +33,12 @@ CMake-Demo
 > 2 . `project`：参数值是 Demo1，该命令表示项目的名称是 Demo1 。  
 > 3 . `add_executable`： 将名为 main.cc 的源文件编译成一个名称为 Demo 的可执行文件。  
 
-## 编译项目
+## 1.3 编译项目
 在当前目录执行 `cmake .` ，得到 Makefile 后再使用 make 命令编译得到 Demo1 可执行文件。
 
 
-# 多个源文件
-## 同一目录，多个源文件(Demo2)
+# 2. 多个源文件
+## 2.1 同一目录，多个源文件(Demo2)
 
 目录结构：
 
@@ -76,7 +76,7 @@ CMake-Demo
 
 这样，CMake 会将当前目录所有源文件的文件名赋值给变量 `DIR_SRCS `，再指示变量 `DIR_SRCS` 中的源文件需要编译成一个名称为 Demo 的可执行文件。
 
-## 多个目录，多个源文件(Demo3)
+## 2.2 多个目录，多个源文件(Demo3)
 目录结构：
 
     ./Demo3   
@@ -121,6 +121,71 @@ CMake-Demo
 
 在该文件中使用命令 `add_library` **将 src 目录中的源文件编译为静态链接库。**
 
+
+# 3. 自定义编译选项
+CMake 允许为项目增加编译选项，从而可以根据用户的环境和需求选择最合适的编译方案。
+
+例如，可以将 MathFunctions 库设为一个可选的库，如果该选项为 `ON` ，就使用该库定义的数学函数来进行运算。否则就调用标准库中的数学函数库。
+
+## 3.1 修改 CMakeLists 文件
+在顶层的 CMakeLists.txt 文件中添加该选项：
+
+    # CMake 最低版本号要求
+    cmake_minimum_required (VERSION 2.8)
+
+    # 项目信息
+    project (Demo4)
+
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+    # 加入一个配置头文件，用于处理 CMake 对源码的设置
+    configure_file (
+        "${PROJECT_SOURCE_DIR}/config.h.in"
+        "${PROJECT_BINARY_DIR}/config.h"
+        )
+
+    # 是否使用自己的 MathFunctions 库
+    option (USE_MYMATH
+        "Use provided math implementation" ON)
+
+    # 是否加入 MathFunctions 库
+    if (USE_MYMATH)
+        include_directories ("${PROJECT_SOURCE_DIR}/math")
+        add_subdirectory (math)
+        set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
+    endif (USE_MYMATH)
+
+    # 查找当前目录下的所有源文件，并将名称保存到 DIR_SRCS 变量
+    aux_source_directory(. DIR_SRCS)
+
+    # 指定生成目标
+    add_executable (Demo ${DIR_SRCS})
+    target_link_libraries (Demo  ${EXTRA_LIBS})
+
+解释：
+> 1 . `configure_file` 命令用于加入一个配置头文件 config.h ，这个文件由 CMake 从 `config.h.in` 生成，通过这样的机制，将可以通过预定义一些参数和变量来控制代码的生成。    
+> 2 . `option` 命令添加了一个 `USE_MYMATH` 选项，并且默认值为 `ON `。    
+> 3 . 根据`USE_MYMATH`变量的值来决定是否使用我们自己编写的 MathFunctions 库。   
+
+## 3.2 修改 main.cc 文件
+之后修改 main.cc 文件，让其根据 `USE_MYMATH` 的预定义值来决定是否调用标准库还是 MathFunctions 库，具体参考main.cc源码。
+
+## 3.3 编写 config.h.in 文件
+main.cc第2行引用了一个 config.h 文件，这个文件预定义了 `USE_MYMATH` 的值。但我们并不直接编写这个文件，为了方便从 CMakeLists.txt 中导入配置，我们编写一个 config.h.in 文件，内容如下，这样 CMake 会自动根据 CMakeLists 配置文件中的设置自动生成 config.h 文件。
+
+    #cmakedefine USE_MYMATH
+
+## 3.4 编译项目
+注意：这里和`https://www.hahack.com/codes/cmake/`教程中写的不一致，注意以下几点：
+> 1 . 教程中的`ccmake`命令在MAC上运行时没有`g`选项，不能保存配置。   
+> 2 . 通过在 `CMakeLists.txt` 文件中打印message的方式进行调试发现，`USE_MYMATH`的值已经为`ON`, 但是main.cc 中是 `undefine USE_MYMATH`。
+
+基于以上2点，正确的编译方式是在camke时将`USE_MYMATH`作为参数传入，如下：
+
+    mkdir build
+    cd build
+    cmake -D USE_MYMATH=ON ..
+    make
 
 
 

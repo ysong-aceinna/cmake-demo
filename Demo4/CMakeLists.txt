@@ -18,9 +18,11 @@ option (USE_MYMATH
 
 # 是否加入 MathFunctions 库
 if (USE_MYMATH)
+  message(WARNING "USE_MYMATH = ${USE_MYMATH}") 
   include_directories ("${PROJECT_SOURCE_DIR}/math")
   add_subdirectory (math)
   set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
+  message(WARNING "EXTRA_LIBS = ${EXTRA_LIBS}") 
 endif (USE_MYMATH)
 
 # 查找当前目录下的所有源文件
