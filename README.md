@@ -152,7 +152,7 @@ CMake 允许为项目增加编译选项，从而可以根据用户的环境和�
     if (USE_MYMATH)
         include_directories ("${PROJECT_SOURCE_DIR}/math")
         add_subdirectory (math)
-        set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions)
+        set (EXTRA_LIBS ${EXTRA_LIBS} MathFunctions) #EXTRA_LIBS后边追加MathFunctions
     endif (USE_MYMATH)
 
     # 查找当前目录下的所有源文件，并将名称保存到 DIR_SRCS 变量
