@@ -106,36 +106,32 @@ void getTimeStamp1()
 	// cout << nan.count() << "纳秒" << endl;
 }
 
-std::time_t getTimeStamp2()
+void getTimeStamp2()
 {
+	//https://blog.csdn.net/q229827701/article/details/51272753
     std::chrono::time_point<std::chrono::system_clock,std::chrono::milliseconds> tp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
     auto tmp=std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch());
     std::time_t timestamp = tmp.count();
-    //std::time_t timestamp = std::chrono::system_clock::to_time_t(tp);
-    return timestamp;
-}
-
-std::tm* gettm(int64 timestamp)
-{
+	
     int64 milli = timestamp+ (int64)8*60*60*1000;//此处转化为东八区北京时间，如果是其它时区需要按需求修改
     auto mTime = std::chrono::milliseconds(milli);
-    auto tp=std::chrono::time_point<std::chrono::system_clock,std::chrono::milliseconds>(mTime);
-    auto tt = std::chrono::system_clock::to_time_t(tp);
+    auto tp_=std::chrono::time_point<std::chrono::system_clock,std::chrono::milliseconds>(mTime);
+    auto tt = std::chrono::system_clock::to_time_t(tp_);
     std::tm* now = std::gmtime(&tt);
-    printf("%4d年%02d月%02d日 %02d:%02d:%02d\n",now->tm_year+1900,now->tm_mon+1,now->tm_mday,now->tm_hour,now->tm_min,now->tm_sec);
-   return now;
+    printf("%4d/%02d/%02d %02d:%02d:%02d\n",now->tm_year+1900,now->tm_mon+1,now->tm_mday,now->tm_hour,now->tm_min,now->tm_sec);
 }
 
 int main(int argc, char** argv)
 {
-	// cout << "Hello!" << endl;
 	// yaml_read_write();
 
 	// EigenTest1();
 
 	// CopyTest();
 
-	// getTimeStamp();
-	gettm(getTimeStamp2());
+	getTimeStamp1();
+
+	getTimeStamp2();
+
 	return 0;
 }
