@@ -4,6 +4,9 @@
 using namespace std;
 using namespace ceres;
 
+//ref:https://blog.csdn.net/q_z_r_s/article/details/83210923
+//http://www.ceres-solver.org/derivatives.html#on-derivatives
+
 struct AutoDiffCostFunctor {
     template <typename T>
     bool operator()(const T* const x, T* residual) const { //修饰大括号的const必须有
@@ -35,6 +38,14 @@ public:
     }
 };	
 
+/*
+同样是求解 ‘10-x’ 这个问题，上边三种求法的效率是不一样的，耗时如下：
+
+AutoDiff time : 1911 (clock tick)
+NumercDiff time : 145
+AnalyticDiff time : 135
+*/
+
 int main(int argc, char** argv)
 {
     const double initial_x = 0.2;
@@ -44,6 +55,7 @@ int main(int argc, char** argv)
     //control whether the log is output to STDOUT
     options.minimizer_progress_to_stdout = true;
     Solver::Summary summary;
+
     //AutoDiff
     CostFunction* CostFunction =
         new AutoDiffCostFunction<AutoDiffCostFunctor,1,1>( new AutoDiffCostFunctor);
@@ -54,6 +66,9 @@ int main(int argc, char** argv)
     clock_t solve_end = clock();
     std::cout << "AutoDiff time : " << solve_end-solve_start << std::endl;
     std::cout << "x : " << initial_x << " -> " << x << std::endl;
+    std::cout << summary.BriefReport() << endl;//输出优化的简要信息
+    cout << "***********************************************" << endl;
+
     //NumericDiff
     CostFunction =
         new NumericDiffCostFunction<NumericDiffCostFunctor,CENTRAL,1,1>(
@@ -65,6 +80,9 @@ int main(int argc, char** argv)
     solve_end = clock();
     std::cout << "NumercDiff time : " << solve_end-solve_start << std::endl;
     std::cout << "x : " << initial_x << " -> " << x << std::endl;
+    std::cout << summary.BriefReport() << endl;//输出优化的简要信息
+    cout << "***********************************************" << endl;
+
     //AnalyticDiff
     //QuadraticCostFunction继承自SizedCostFunction,而SizedCostFunction继承自
     //CostFunction,因此此语句与上述两种对CostFunction的赋值操作略有不同
@@ -76,6 +94,8 @@ int main(int argc, char** argv)
     solve_end = clock();
     std::cout << "AnalyticDiff time : " << solve_end-solve_start << std::endl;
     std::cout << "x : " << initial_x << " -> " << x << std::endl;
+    std::cout << summary.BriefReport() << endl;//输出优化的简要信息
+
     return 0;
 };
 

@@ -121,6 +121,23 @@ void getTimeStamp2()
     printf("%4d/%02d/%02d %02d:%02d:%02d\n",now->tm_year+1900,now->tm_mon+1,now->tm_mday,now->tm_hour,now->tm_min,now->tm_sec);
 }
 
+void cal_diff_time(void)
+{
+    long i = 800000000L;
+    double duration;
+    clock_t start, finish;
+
+    start = clock();
+    while( i-- );
+	// sleep(1); //测sleep的耗时不准。
+    finish = clock();
+
+    duration = (double)(finish - start) / CLOCKS_PER_SEC;
+	cout << "start:"<< start<< " ,finish:"<< finish<< endl;
+    printf( "%f seconds\n", duration );
+    // system("pause");
+}
+
 int main(int argc, char** argv)
 {
 	// yaml_read_write();
@@ -129,7 +146,11 @@ int main(int argc, char** argv)
 
 	// CopyTest();
 
-	getTimeStamp1();
+	// getTimeStamp1();
+
+	getTimeStamp2();
+
+	cal_diff_time();
 
 	getTimeStamp2();
 

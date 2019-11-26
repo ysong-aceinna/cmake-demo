@@ -4,7 +4,10 @@
 using namespace std;
 using namespace ceres;
 
-
+//ref:http://www.ceres-solver.org/nnls_tutorial.html#powell-s-function
+//https://blog.csdn.net/q_z_r_s/article/details/83210923
+//Powell’s Function
+//for method1
 struct CostFuntorF1 {template <typename T>
     bool operator()(const T* const x1, const T* const x2, T* residuals) const {
         residuals[0] = x1[0] + T(10)*x2[0];
@@ -32,7 +35,20 @@ struct CostFuntorF4 {
         return true;
 	}
 };
-int main(int argc, char** argv)
+
+//for method2
+struct CostFunctor {
+    template <typename T>
+    bool operator()(const T* const x, T* residuals) const{
+        residuals[0] = x[0] - T(10) * x[1];
+        residuals[1] = T(sqrt(5)) * (x[2] - x[3]);
+        residuals[2] = (x[1] - T(2) * x[2]) * (x[1] - T(2) * x[2]);
+        residuals[3] = T(sqrt(10)) * (x[0] - x[3]) * (x[0] - x[3]);
+        return true;
+	}
+};
+
+void method1()
 {
     const double initial_x1 = 10, initial_x2 = 5,
     initial_x3 = 2, initial_x4 = 1;
@@ -59,7 +75,35 @@ int main(int argc, char** argv)
     cout << "x1 : " << initial_x1 << "->" << x1 << endl;
     cout << "x2 : " << initial_x2 << "->" << x2 << endl;
     cout << "x3 : " << initial_x3 << "->" << x3 << endl;
-    cout << "x4 : " << initial_x4 << "->" << x4 << endl;
+    cout << "x4 : " << initial_x4 << "->" << x4 << endl;    
+}
+
+void method2()
+{
+    const double initial_x1 = 10, initial_x2 = 5,
+    initial_x3 = 2, initial_x4 = 1;
+    Problem problem;
+    Solver::Options options;
+    //control whether the log is output to STDOUT
+    options.minimizer_progress_to_stdout = true;
+    Solver::Summary summary;
+    double x[4] = {initial_x1, initial_x2, initial_x3, initial_x4};
+    CostFunction* costfunction = new AutoDiffCostFunction<CostFunctor, 4, 4>(
+    	new CostFunctor);
+    Problem pb;
+    pb.AddResidualBlock(costfunction,NULL,x);
+    Solve(options,&pb,&summary);
+    cout << "x[0] : " << initial_x1 << "->" << x[0] << endl;
+    cout << "x[1] : " << initial_x2 << "->" << x[1] << endl;
+    cout << "x[2] : " << initial_x3 << "->" << x[2] << endl;
+    cout << "x[3] : " << initial_x4 << "->" << x[3] << endl;
+}
+
+int main(int argc, char** argv)
+{
+    method1();
+    cout << "***************************************" << endl;
+    method2();
     return 0;
 }
 

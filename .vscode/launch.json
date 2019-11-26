@@ -8,13 +8,14 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Demo9/build/Demo",
+            "program": "${workspaceFolder}/Demo10/build/ceres5",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb",
+            // "MIMode": "gdb",
+            "MIMode": "lldb",// 指定连接的调试器，可以为gdb(Ubuntu)或 lldb(Mac)。
             "preLaunchTask": "build",
             "setupCommands": [
                 {

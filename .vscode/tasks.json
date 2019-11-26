@@ -4,7 +4,7 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "make -C ./Demo9/build/"
+            "command": "make -C ./Demo10/build/"
         }
     ]
 }

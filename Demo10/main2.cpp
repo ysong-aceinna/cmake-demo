@@ -4,6 +4,9 @@
 using namespace std;
 using namespace cv;
 
+//曲线拟合
+//ref: https://blog.csdn.net/cqrtxwd/article/details/78956227
+
 //构建代价函数结构体，abc为待优化参数，residual为残差。
 struct CURVE_FITTING_COST
 {
