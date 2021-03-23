@@ -13,8 +13,7 @@ configure_file (
   )
  
 # 是否使用自己的 MathFunctions 库
-option (USE_MYMATH
-	   "Use provided math implementation" ON)
+option (USE_MYMATH "Use provided math implementation" ON)
 
 # 是否加入 MathFunctions 库
 if (USE_MYMATH)
