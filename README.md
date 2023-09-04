@@ -254,7 +254,11 @@ PROJECT_NAME:PROJECT NAME
 # 13. Demo16
 **学习使用高斯消元法解方程，求逆矩阵**
 
+# 14. Demo17
+**Eigen Test**
 
+# 15. Demo18
+**Python 调用.so**
 
 
 
