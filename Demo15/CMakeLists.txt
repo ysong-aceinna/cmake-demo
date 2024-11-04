@@ -4,6 +4,9 @@ project(yaml_test)
 
 add_definitions(-std=c++11)
 
+SET(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS "-std=c++11 ")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
 
 include_directories(include)
 set(SRCS yaml_test.cpp)

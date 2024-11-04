@@ -10,7 +10,7 @@ using namespace std;
 
 int main(int argc,char** argv)
 {
-    YAML::Node config = YAML::LoadFile("../config.yaml");
+    YAML::Node config = YAML::LoadFile("/Users/songyang/project/code/github/cmake-demo/Demo15/config.yaml");
 
     //YAML::Node的类型有4中，参考NodeType定义。
     cout << "Node type " << config.Type() << endl;
